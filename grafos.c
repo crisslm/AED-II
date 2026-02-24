@@ -47,17 +47,36 @@ void removeEdge(grafo *g, int fromA, int toB){
     g->matrixAdj[fromA][toB] = 0;
 }
 
-int verticeDegree(grafo *g, int vertice){
+int vertexDegree(grafo *g, int vertex){
     int countIn = 0;
     int countOut = 0;
     for(int i=0;i<g->numVertices;i++){
         //count out
-        if(g->matrixAdj[vertice][i] != 0) countOut++;
+        if(g->matrixAdj[vertex][i] != 0) countOut++;
         //count In
-        if(g->matrixAdj[i][vertice] != 0) countIn++;
+        if(g->matrixAdj[i][vertex] != 0) countIn++;
     }
     int degree = countIn + countOut;
     return degree;
+}
+
+void allVerticesDegree(grafo *g){
+    printf("\nAll vertices degrees:\n");
+    int countIn = 0;
+    int countOut = 0;
+    for(int j=0;j<g->numVertices;j++){
+        for(int i=0;i<g->numVertices;i++){
+            //count out
+            if(g->matrixAdj[j][i] != 0) countOut++;
+            //count In
+            if(g->matrixAdj[i][j] != 0) countIn++;
+        }
+        int degree = countIn + countOut;
+        printf("Vertex %d: %d degrees\n", j, degree);
+        countIn = 0;
+        countOut = 0;
+    }
+    return;
 }
 
 int main(){
@@ -67,9 +86,9 @@ int main(){
 
     int keep = 99;
     int opt;
-    int from , to, vertice, vertice_degree;
+    int from , to, vertex, vertex_degree;
     do{
-        printf("\n[1]add Edge\n[2]remove Edge\n[3]vertice degree\n[0]Sair\nEnter: ");
+        printf("\n[1]add Edge\n[2]remove Edge\n[3]vertex degree\n[4]show all vertices degree\n[0]Exit\nEnter: ");
         scanf("%d",&opt);
         switch(opt){
             case 1:
@@ -78,6 +97,7 @@ int main(){
                 printf("to: ");
                 scanf("%d",&to);
                 addEdge(&g, from, to);
+                printf("\n");
                 printGrafo(&g);
             break;
 
@@ -91,10 +111,15 @@ int main(){
             break;
 
             case 3:
-                printf("Vertice: ");
-                scanf("%d",&vertice);
-                vertice_degree = verticeDegree(&g, vertice);
-                printf("\nVertice %d degree is %d.\n", vertice, vertice_degree);
+                printf("Vertex: ");
+                scanf("%d",&vertex);
+                vertex_degree = vertexDegree(&g, vertex);
+                printf("\nVertex %d degree is %d.\n", vertex, vertex_degree);
+            break;
+
+            case 4:
+                allVerticesDegree(&g);
+            
             break;
 
             case 0:
@@ -106,10 +131,6 @@ int main(){
             break;
         }
     }while(keep != 0);
-
-    printf("%d ", g.numVertices);
-
-
 
     return 0;
 }
