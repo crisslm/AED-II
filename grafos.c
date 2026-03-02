@@ -23,11 +23,11 @@ void initializeGrafo(grafo *g, int numVertices){
 void printGrafo(grafo *g){
      printf(" ");
     for(int i = 0; i < g->numVertices; i++){
-        printf("|%d",i);
+        printf("|%d",i+1);
     }
     printf("\n");
     for(int i = 0; i < g->numVertices; i++){
-        printf("%d|", i);
+        printf("%d|", i+1);
         for(int j = 0; j < g->numVertices; j++){
             printf("%d ", g->matrixAdj[i][j]);
         }
@@ -37,30 +37,32 @@ void printGrafo(grafo *g){
 }
 
 void addEdge(grafo *g, int fromA, int toB){
-    if(g->matrixAdj[fromA][toB] != 0) return;
-    g->matrixAdj[fromA][toB] = 1;
+    if(g->matrixAdj[fromA-1][toB-1] != 0) return;
+    g->matrixAdj[fromA-1][toB-1] = 1;
     return;
 }
 
 void removeEdge(grafo *g, int fromA, int toB){
-    if(g->matrixAdj[fromA][toB] == 0) return;
-    g->matrixAdj[fromA][toB] = 0;
+    g->matrixAdj[fromA-1][toB-1] = 0;
 }
 
-int vertexDegree(grafo *g, int vertex){
+void vertexDegrees(grafo *g, int vertex){
     int countIn = 0;
     int countOut = 0;
     for(int i=0;i<g->numVertices;i++){
         //count out
-        if(g->matrixAdj[vertex][i] != 0) countOut++;
+        if(g->matrixAdj[vertex-1][i] != 0) countOut++;
         //count In
-        if(g->matrixAdj[i][vertex] != 0) countIn++;
+        if(g->matrixAdj[i][vertex-1] != 0) countIn++;
     }
     int degree = countIn + countOut;
-    return degree;
+    printf("-----------------\n");
+    printf("\nVertex %d STATUS:\nDegree: %d\nIn: %d\nOut: %d\n",vertex, degree, countIn, countOut);
+    printf("-----------------\n");
 }
 
 void allVerticesDegree(grafo *g){
+     printf("--------------------\n");
     printf("\nAll vertices degrees:\n");
     int countIn = 0;
     int countOut = 0;
@@ -72,26 +74,33 @@ void allVerticesDegree(grafo *g){
             if(g->matrixAdj[i][j] != 0) countIn++;
         }
         int degree = countIn + countOut;
-        printf("Vertex %d: %d degrees\n", j, degree);
+        printf("Vertex %d: %d degrees\n", j+1, degree);
         countIn = 0;
         countOut = 0;
     }
+    printf("--------------------\n");
     return;
 }
 
 int main(){
     grafo g;
-    initializeGrafo(&g, 6); //Define the number of vertices here.
+    int vertices;
+    printf("How many vertices?(1-100): ");
+    scanf("%d",&vertices);
+    printf("\n");
+    initializeGrafo(&g, vertices); //Define the number of vertices here.
     printGrafo(&g);
 
     int keep = 99;
     int opt;
-    int from , to, vertex, vertex_degree;
+    int from , to, vertex;
     do{
-        printf("\n[1]add Edge\n[2]remove Edge\n[3]vertex degree\n[4]show all vertices degree\n[0]Exit\nEnter: ");
+        printf("---------------------\n");
+        printf("\n[1]add Edge\n[2]remove Edge\n[3]vertex degrees\n[4]show all vertices degree\n[0]Exit\nEnter: ");
         scanf("%d",&opt);
         switch(opt){
             case 1:
+                printf("----------\n");
                 printf("from: ");
                 scanf("%d",&from);
                 printf("to: ");
@@ -102,19 +111,20 @@ int main(){
             break;
 
             case 2:
+                printf("----------\n");
                 printf("from: ");
                 scanf("%d",&from);
                 printf("to: ");
                 scanf("%d",&to);
                 removeEdge(&g, from, to);
                 printGrafo(&g);
+                printf("----------\n");
             break;
 
             case 3:
                 printf("Vertex: ");
                 scanf("%d",&vertex);
-                vertex_degree = vertexDegree(&g, vertex);
-                printf("\nVertex %d degree is %d.\n", vertex, vertex_degree);
+                vertexDegrees(&g, vertex);
             break;
 
             case 4:
