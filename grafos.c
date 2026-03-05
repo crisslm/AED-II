@@ -21,24 +21,33 @@ void initializeGrafo(grafo *g, int numVertices){
 }
 
 void printGrafo(grafo *g){
-     printf(" ");
+     printf("   ");
     for(int i = 0; i < g->numVertices; i++){
-        printf("|%d",i+1);
+        if(i < 9){
+            printf(" | %d",i+1);
+        } else{
+            printf("| %d",i+1);
+        }
     }
     printf("\n");
     for(int i = 0; i < g->numVertices; i++){
-        printf("%d|", i+1);
+        if(i < 9){
+            printf("%3d|", i+1);
+        } else{
+            printf("%3d|", i+1);
+        }
+        
         for(int j = 0; j < g->numVertices; j++){
-            printf("%d ", g->matrixAdj[i][j]);
+            printf("%3d ", g->matrixAdj[i][j]);
         }
         printf("\n");
     }   
     printf("\n"); 
 }
 
-void addEdge(grafo *g, int fromA, int toB){
+void addEdge(grafo *g, int fromA, int toB, Weight peso){
     if(g->matrixAdj[fromA-1][toB-1] != 0) return;
-    g->matrixAdj[fromA-1][toB-1] = 1;
+    g->matrixAdj[fromA-1][toB-1] = peso;
     return;
 }
 
@@ -74,15 +83,41 @@ void allVerticesDegree(grafo *g){
             if(g->matrixAdj[i][j] != 0) countIn++;
         }
         int degree = countIn + countOut;
-        printf("Vertex %d: %d degrees\n", j+1, degree);
+        if(j + 1 < 10){
+            printf("Vertex %d:  %d DEGREES | IN: %d | OUT: %d\n", j+1, degree, countIn, countOut);
+        } else{
+            printf("Vertex %d: %d DEGREES | IN: %d | OUT: %d\n", j+1, degree, countIn, countOut);
+        }
         countIn = 0;
         countOut = 0;
     }
-    printf("--------------------\n");
     return;
 }
 
+void adjacentVertices(grafo *g, int vertex){
+    printf("Adjacent Vertices:\n");
+    for(int i=0; i < g->numVertices; i++){
+        if(g->matrixAdj[vertex-1][i] != 0){
+            printf("[%d] ", i+1);
+        }
+    }
+    printf("\n");
+}
+
+int obterNrArestas(grafo *g){
+    return g->numVertices;
+}
+
+bool existeAresta(grafo *g, int v1, int v2){
+    if(g->matrixAdj[v1][v2] != 0) return true;
+    return false;
+}
+
+
 int main(){
+    //==============================================================================
+    //A MAIN SO ACESSA O GRAFO PELAS FUNÇÕES, MAS NÃO CONHECE AS ESTRUTURA DO GRAFO.
+    //==============================================================================
     grafo g;
     int vertices;
     printf("How many vertices?(1-100): ");
@@ -94,9 +129,10 @@ int main(){
     int keep = 99;
     int opt;
     int from , to, vertex;
+    Weight peso;
     do{
         printf("---------------------\n");
-        printf("\n[1]add Edge\n[2]remove Edge\n[3]vertex degrees\n[4]show all vertices degree\n[0]Exit\nEnter: ");
+        printf("\n[1]add Edge\n[2]remove Edge\n[3]vertex degrees\n[4]show all vertices degree\n[5]Adjacents Vertices\n[0]Exit\nEnter: ");
         scanf("%d",&opt);
         switch(opt){
             case 1:
@@ -105,7 +141,9 @@ int main(){
                 scanf("%d",&from);
                 printf("to: ");
                 scanf("%d",&to);
-                addEdge(&g, from, to);
+                printf("Weight: ");
+                scanf("%d", &peso);
+                addEdge(&g, from, to, peso);
                 printf("\n");
                 printGrafo(&g);
             break;
@@ -130,6 +168,12 @@ int main(){
             case 4:
                 allVerticesDegree(&g);
             
+            break;
+
+            case 5:
+                printf("Vertex: ");
+                scanf("%d",&vertex);
+                adjacentVertices(&g, vertex);
             break;
 
             case 0:
